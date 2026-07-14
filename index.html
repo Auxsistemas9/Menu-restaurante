@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú de la Semana</title>
+    <link rel="icon" type="image/png" href="logo-uniroca.png">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo-uniroca.png">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+
+            /* Escalas fluidas: se adaptan solas entre celular chico y pantallas grandes */
+            --container-max: 480px;
+            --gap: clamp(6px, 1.5vw, 10px);
+            --radius: clamp(10px, 2vw, 16px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            /* Evita que el texto se vea microscópico en pantallas muy chicas (ej. 320px) */
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: clamp(10px, 3vw, 24px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh; /* mejor soporte en móviles con barras dinámicas */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: clamp(12px, 3vw, 20px);
+            width: 100%;
+            max-width: var(--container-max);
+        }
+
+        header h1 {
+            font-size: clamp(1.3rem, 4.5vw, 1.8rem);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            color: var(--text-muted);
+        }
+
+        /* Barra de navegación de días */
+        .days-nav {
+            display: flex;
+            gap: var(--gap);
+            width: 100%;
+            max-width: var(--container-max);
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: clamp(12px, 3vw, 20px);
+            scrollbar-width: none;
+        }
+
+        .days-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .day-btn {
+            flex: 1;
+            min-width: 60px; /* permite que quepan bien incluso en pantallas de 320px */
+            padding: clamp(9px, 2.5vw, 12px) 4px;
+            border: none;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+            text-align: center;
+            font-size: clamp(0.75rem, 2.3vw, 0.9rem);
+        }
+
+        .day-btn:hover {
+            background-color: #e2e8f0;
+        }
+
+        .day-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .day-btn.active:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .day-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Contenedor de la Imagen */
+        .menu-card {
+            width: 100%;
+            max-width: var(--container-max);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: clamp(10px, 3vw, 16px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+
+        .menu-header h2 {
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+        }
+
+        /* Ajuste Responsive de la Imagen */
+        .image-wrapper {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Reserva espacio mientras carga la imagen, evita saltos de layout */
+            min-height: 200px;
+        }
+
+        .menu-img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            display: block;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Mensaje de error si la imagen no carga */
+        .img-error {
+            display: none;
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .image-wrapper.error .menu-img {
+            display: none;
+        }
+
+        .image-wrapper.error .img-error {
+            display: block;
+        }
+
+        /* Pie de página */
+        footer {
+            margin-top: auto;
+            padding: 20px 0 5px 0;
+            font-size: clamp(0.7rem, 2vw, 0.75rem);
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ---------- Pantallas muy pequeñas (celulares angostos, ej. 320px) ---------- */
+        @media (max-width: 340px) {
+            .day-btn {
+                min-width: 52px;
+                padding: 8px 2px;
+            }
+        }
+
+        /* ---------- Tablets ---------- */
+        @media (min-width: 640px) {
+            :root {
+                --container-max: 560px;
+            }
+        }
+
+        /* ---------- Escritorio / pantallas grandes ---------- */
+        @media (min-width: 1024px) {
+            :root {
+                --container-max: 640px;
+            }
+
+            .menu-card {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            }
+
+            .day-btn {
+                cursor: pointer;
+            }
+        }
+
+        /* ---------- Pantallas muy grandes ---------- */
+        @media (min-width: 1440px) {
+            :root {
+                --container-max: 720px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Respeta preferencia de movimiento reducido */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Menú de la Semana</h1>
+        <p> Comunicación Interna</p>
+    </header>
+
+    <nav class="days-nav">
+        <button class="day-btn active" onclick="cargarMenu('lunes', this)">Lun</button>
+        <button class="day-btn" onclick="cargarMenu('martes', this)">Mar</button>
+        <button class="day-btn" onclick="cargarMenu('miercoles', this)">Mié</button>
+        <button class="day-btn" onclick="cargarMenu('jueves', this)">Jue</button>
+        <button class="day-btn" onclick="cargarMenu('viernes', this)">Vie</button>
+    </nav>
+
+    <main class="menu-card">
+        <div class="menu-header">
+            <h2 id="nombre-dia">Lunes</h2>
+        </div>
+
+        <div class="image-wrapper" id="image-wrapper">
+            <img id="menu-foto" src="lunes.jpg" alt="Cargando menú..." class="menu-img">
+            <p class="img-error">No se pudo cargar la imagen del menú.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Departamento de IT</p>
+    </footer>
+
+    <script>
+        // Mapeo de días con sus respectivas rutas de imágenes
+        const rutasImagenes = {
+            lunes: { dia: "Lunes", img: "lunes.jpg" },
+            martes: { dia: "Martes", img: "martes.png" },
+            miercoles: { dia: "Miércoles", img: "menu_miercoles.jpeg" },
+            jueves: { dia: "Jueves", img: "jueves.jpeg" },
+            viernes: { dia: "Viernes", img: "viernes.png" }
+        };
+
+        function cargarMenu(diaCodigo, boton) {
+            // Cambiar clase activa en los botones
+            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+            boton.classList.add('active');
+
+            // Cambiar título e imagen correspondientes
+            const datos = rutasImagenes[diaCodigo];
+            document.getElementById('nombre-dia').innerText = datos.dia;
+
+            const wrapper = document.getElementById('image-wrapper');
+            const imagenElemento = document.getElementById('menu-foto');
+            wrapper.classList.remove('error');
+            imagenElemento.src = datos.img;
+            imagenElemento.alt = "Menú del " + datos.dia;
+        }
+
+        // Si la imagen falla en cargar, mostramos un mensaje en vez de un ícono roto
+        document.getElementById('menu-foto').addEventListener('error', function () {
+            document.getElementById('image-wrapper').classList.add('error');
+        });
+
+        // Auto-detectar el día real al abrir la app
+        window.addEventListener('DOMContentLoaded', () => {
+            const diasSemana = ['viernes', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'viernes'];
+            const numeroDia = new Date().getDay();
+            const diaActual = diasSemana[numeroDia];
+
+            const botones = document.querySelectorAll('.day-btn');
+            const indices = { 'lunes': 0, 'martes': 1, 'miercoles': 2, 'jueves': 3, 'viernes': 4 };
+
+            if (diaActual in indices) {
+                botones[indices[diaActual]].click();
+            }
+        });
+
+        // 2. SCRIPT PARA REGISTRAR LA WEB COMO APLICACIÓN (SERVICE WORKER)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js').then(function(registration) {
+                    console.log('ServiceWorker registrado con éxito');
+                }, function(err) {
+                    console.log('Error al registrar el ServiceWorker: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
