@@ -361,23 +361,21 @@ window.onload = function() {
     seleccionarDiaActual(); // Esta es la función del punto 2
 };
 
-function seleccionarDiaActual() {
+    function seleccionarDiaActual() {
     const hoy = new Date();
-    const numeroDia = hoy.getDay(); // 0 = Dom, 1 = Lun, 2 = Mar, 3 = Mié, 4 = Jue, 5 = Vie, 6 = Sáb
-    
-    // Mapeamos los días de lunes a viernes. 
-    // Si es sábado (6) o domingo (0), por defecto podemos mostrar el Lunes (1)
-    let diaClave = "Lun"; 
-    
-    if (numeroDia === 2) diaClave = "Mar";
-    else if (numeroDia === 3) diaClave = "Mie";
-    else if (numeroDia === 4) diaClave = "Jue";
-    else if (numeroDia === 5) diaClave = "Vie";
-    
-    // Aquí ejecutas la lógica que ya tienes escrita para cambiar de pestaña.
-    // Por ejemplo, si tienes una función llamada 'mostrarMenu(dia)', la llamas así:
-    cambiarPestana(diaClave); 
+    const numeroDia = hoy.getDay();
+
+    const indices = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }; // Lun a Vie
+    const botones = document.querySelectorAll('.day-btn');
+
+    if (numeroDia in indices) {
+        botones[indices[numeroDia]].click();
+    } else {
+        botones[0].click(); // fin de semana -> muestra Lunes
+    }
 }
+
+
 </script>
 </body>
 </html>
