@@ -342,7 +342,7 @@
     const viernes = new Date(hoy.setDate(diffViernes));
     
     // Formatear las fechas en formato DD/MM/AA
-    const formatoFecha = (fecha) => {s
+    const formatoFecha = (fecha) => {
         const dd = String(fecha.getDate()).padStart(2, '0');
         const mm = String(fecha.getMonth() + 1).padStart(2, '0'); // Enero es 0
         const aa = String(fecha.getFullYear()).slice(-2); // Tomar los últimos 2 dígitos del año
