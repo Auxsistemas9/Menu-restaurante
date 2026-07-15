@@ -1,0 +1,20 @@
+{
+  "name": "Menú de la Semana - Uniroca",
+  "short_name": "Menú Uniroca",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "logo-uniroca.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo-uniroca.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
