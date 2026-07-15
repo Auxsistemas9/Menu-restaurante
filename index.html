@@ -241,6 +241,7 @@
 
     <header>
         <h1>Menú de la Semana</h1>
+        <p id="rango-fecha" class="subtitulo">Cargando fechas...</p>
         <p> Comunicación Interna</p>
     </header>
 
@@ -323,5 +324,60 @@
             });
         }
     </script>
+
+
+
+<script> 
+    function mostrarRangoSemana() {
+    const hoy = new Date();
+    const diaSemana = hoy.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+    
+    // Calculamos los días de diferencia para llegar a Lunes (1) y a Viernes (5)
+    // Si hoy es domingo (0), asumimos la semana que entra o la que termina. 
+    // Ajustamos para que tome el lunes de la semana actual:
+    const diffLunes = hoy.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1); 
+    const diffViernes = diffLunes + 4; // Viernes es 4 días después del lunes
+    
+    const lunes = new Date(hoy.setDate(diffLunes));
+    const viernes = new Date(hoy.setDate(diffViernes));
+    
+    // Formatear las fechas en formato DD/MM/AA
+    const formatoFecha = (fecha) => {s
+        const dd = String(fecha.getDate()).padStart(2, '0');
+        const mm = String(fecha.getMonth() + 1).padStart(2, '0'); // Enero es 0
+        const aa = String(fecha.getFullYear()).slice(-2); // Tomar los últimos 2 dígitos del año
+        return `${dd}/${mm}/${aa}`;
+    };
+
+    const textoRango = `Semana del ${formatoFecha(lunes)} al ${formatoFecha(viernes)}`;
+    
+    // Insertar el texto en tu HTML (asegúrate de tener un elemento con id="rango-fecha")
+    document.getElementById("rango-fecha").innerText = textoRango;
+}
+
+// Llamar a la función cuando cargue la página
+window.onload = function() {
+    mostrarRangoSemana();
+    seleccionarDiaActual(); // Esta es la función del punto 2
+};
+
+function seleccionarDiaActual() {
+    const hoy = new Date();
+    const numeroDia = hoy.getDay(); // 0 = Dom, 1 = Lun, 2 = Mar, 3 = Mié, 4 = Jue, 5 = Vie, 6 = Sáb
+    
+    // Mapeamos los días de lunes a viernes. 
+    // Si es sábado (6) o domingo (0), por defecto podemos mostrar el Lunes (1)
+    let diaClave = "Lun"; 
+    
+    if (numeroDia === 2) diaClave = "Mar";
+    else if (numeroDia === 3) diaClave = "Mie";
+    else if (numeroDia === 4) diaClave = "Jue";
+    else if (numeroDia === 5) diaClave = "Vie";
+    
+    // Aquí ejecutas la lógica que ya tienes escrita para cambiar de pestaña.
+    // Por ejemplo, si tienes una función llamada 'mostrarMenu(dia)', la llamas así:
+    cambiarPestana(diaClave); 
+}
+</script>
 </body>
 </html>
